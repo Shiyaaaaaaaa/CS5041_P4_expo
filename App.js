@@ -34,9 +34,9 @@ function HomeScreen({ navigation }) {
           resizeMode="cover"
           shouldPlay
           source={{
-            uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+            uri: "https://cdn.coverr.co/videos/coverr-the-ocean-in-the-evening-3606/1080p.mp4",
           }}
-          style={{ width: '40%', height: '50%', position: "cover" }} // 修改这里
+          style={{ width: '100%', height: '100%', position: "cover" }} // 修改这里
         />
       </Animated.View>
       <TouchableOpacity
@@ -49,19 +49,19 @@ function HomeScreen({ navigation }) {
         style={styles.button}
         onPress={() => navigation.navigate("MessageScreen")}
       >
-        <Text style={styles.buttonText}>Go to Message to Fife Rabbits</Text>
+        <Text style={styles.buttonText}>Send message to Fife Rabbits</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("MoodScreen")}
+      >
+        <Text style={styles.buttonText}>Send your color of moods</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("WeatherScreen")}
       >
         <Text style={styles.buttonText}>Go to check the Fife environment</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("MoodScreen")}
-      >
-        <Text style={styles.buttonText}>Go to send you color of moods</Text>
       </TouchableOpacity>
     </View>
   );

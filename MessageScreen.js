@@ -27,6 +27,8 @@ import { useList } from 'react-firebase-hooks/database';
 
 import { ListItem, Input, Button } from 'react-native-elements';
 
+import { SearchBar } from 'react-native-elements';
+
 const firebaseConfig = {
   apiKey: "AIzaSyDBjUEw_DQNMQsZJWfTtLL0PQJoH-xF0kk",
   authDomain: "sta-cs5041.firebaseapp.com",
@@ -150,28 +152,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding: 10, // 设置统一的边距
   },
   card: {
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 10,
-    marginBottom: 10,
+    margin: 10, // 设置统一的间距
   },
   inputContainer: {
     display: 'flex',
     flexDirection: 'row',
+    marginBottom: 10, // 设置底部间距
   },
   textInput: {
     flex: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 5,
+    fontSize: 16, // 设置字体大小
   },
   sendButton: {
     backgroundColor: 'blue',
-    margin: 10,
+    marginLeft: 10, // 设置左侧间距
   },
   messageList: {
-    margin: 10,
+    flex: 1,
   },
 });
+
+
 
 
 
