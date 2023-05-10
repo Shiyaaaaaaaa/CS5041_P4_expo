@@ -80,6 +80,7 @@ const Add = ({ user }) => {
             type: 'str',
             string: text.toString(),
           });
+          setText(''); // 清除输入框内容
         }}
         title="Post"
       />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, Animated } from 'react-native';
 // 导入所需的Firebase函数
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -39,10 +39,41 @@ const emotions = [
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
-const cardSize = deviceWidth / 4;
-const cardMargin = (deviceWidth * 0.01) / 2;
+const cardSize = deviceWidth / 4.5; // 缩小卡片大小
+const cardMargin = (deviceWidth * 0.02); // 增加卡片间距
 
 const MoodScreen = () => {
+  const [scale] = useState(emotions.map(() => new Animated.Value(1)));
+  const [opacity] = useState(emotions.map(() => new Animated.Value(1)));
+  const animateCard = (index) => {
+    Animated.sequence([
+      Animated.parallel([
+        Animated.timing(scale[index], {
+          toValue: 0.9,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity[index], {
+          toValue: 0.7,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(scale[index], {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity[index], {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  };
+
   const [selectedEmotion, setSelectedEmotion] = useState(null);
 
   // 发送数据到Firebase的函数
@@ -61,26 +92,32 @@ const MoodScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>How are you feeling today?</Text>
       <View style={styles.emotionCardsContainer}>
         {emotions.map((emotion, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
+              animateCard(index);
               setSelectedEmotion(emotion);
               sendDataToFirebase(index);
             }}
           >
-            <View
+            <Animated.View
               style={[
                 styles.emotionCard,
                 { backgroundColor: emotion.color },
+                {
+                  transform: [{ scale: scale[index] }],
+                  opacity: opacity[index],
+                },
               ]}
             >
               <Text style={styles.emotionText}>{emotion.name}</Text>
               {selectedEmotion === emotion && (
                 <Image source={emotion.icon} style={styles.emotionIcon} />
               )}
-            </View>
+            </Animated.View>
           </TouchableOpacity>
         ))}
       </View>
@@ -97,16 +134,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: 40,
+    marginBottom: 20,
+  },
   emotionCardsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    width: '100%',
-    height: deviceHeight * 0.8,
+    width: deviceWidth * 0.8, // 调整容器宽度
+    height: deviceHeight * 0.6, // 调整容器高度
     alignItems: 'center',
+    padding: 1,
   },
-
   emotionCard: {
     width: cardSize,
     height: cardSize,
@@ -114,6 +156,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: cardMargin,
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 
   emotionText: {
@@ -126,5 +173,11 @@ const styles = StyleSheet.create({
   emotionIcon: {
     width: 100,
     height: 100,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: 40,
+    marginBottom: 20,
   },
 });

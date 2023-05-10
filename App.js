@@ -1,20 +1,69 @@
-
+import React, { useState } from 'react';
+import {
+  Animated,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { TouchableOpacity, Text, Animated } from "react-native";
-
-import { Video } from "expo-av";
-import React, { useState } from 'react';
-
-import MessageScreen from './MessageScreen.js';
-import WeatherScreen from './WeatherScreen.js';
-import MoodScreen from './MoodScreen.js';
+import { Video } from 'expo-av';
+import MessageScreen from './MessageScreen'; 
+import WeatherScreen from './WeatherScreen';
+import MoodScreen from './MoodScreen';
 
 const { width, height } = Dimensions.get('window');
 
 function HomeScreen({ navigation }) {
   const [opacity] = useState(new Animated.Value(0));
+
+  const handlePressIn = (buttonOpacity) => {
+    Animated.timing(buttonOpacity, {
+      toValue: 0.5,
+      duration: 150,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handlePressOut = (buttonOpacity) => {
+    Animated.timing(buttonOpacity, {
+      toValue: 1,
+      duration: 150,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const renderButton = (title, onPress) => {
+    const buttonOpacity = new Animated.Value(1);
+
+    return (
+      <Animated.View
+        style={[
+          styles.buttonContainer,
+          {
+            opacity: buttonOpacity,
+            shadowOpacity: buttonOpacity.interpolate({
+              inputRange: [0.5, 1],
+              outputRange: [0.3, 0.8],
+            }),
+          },
+        ]}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.button}
+          onPressIn={() => handlePressIn(buttonOpacity)}
+          onPressOut={() => handlePressOut(buttonOpacity)}
+          onPress={onPress}
+        >
+          <Text style={styles.buttonText}>{title}</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Animated.View
@@ -39,30 +88,10 @@ function HomeScreen({ navigation }) {
           style={{ width: '100%', height: '100%', position: "cover" }} // 修改这里
         />
       </Animated.View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={navigation.openDrawer}
-      >
-        <Text style={styles.buttonText}>Open navigation drawer</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("MessageScreen")}
-      >
-        <Text style={styles.buttonText}>Send message to Fife Rabbits</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("MoodScreen")}
-      >
-        <Text style={styles.buttonText}>Send your color of moods</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("WeatherScreen")}
-      >
-        <Text style={styles.buttonText}>Go to check the Fife environment</Text>
-      </TouchableOpacity>
+      {renderButton('Open navigation drawer', navigation.openDrawer)}
+      {renderButton('Send message to Fife Rabbits', () => navigation.navigate('MessageScreen'))}
+      {renderButton('Send your color of moods', () => navigation.navigate('MoodScreen'))}
+      {renderButton('Go to check the Fife environment', () => navigation.navigate('WeatherScreen'))}
     </View>
   );
 }
@@ -97,15 +126,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  button: {
+  buttonContainer: {
     width: "100%",
     maxWidth: 300,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  button: {
     backgroundColor: "#1e90ff",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
   },
   buttonText: {
     color: "white",
@@ -115,3 +150,4 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
