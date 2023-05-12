@@ -16,7 +16,6 @@ const firebaseConfig = {
   const firebaseToken = "9dd8d43a-01db-4286-b0e8-371d24237380";
 
 const firebaseApp = initializeApp(firebaseConfig);
-
 export const auth = getAuth(firebaseApp);
 export const database = getDatabase(firebaseApp);
 export const functions = getFunctions(firebaseApp);

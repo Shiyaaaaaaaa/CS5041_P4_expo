@@ -5,6 +5,10 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, push, serverTimestamp } from "firebase/database";
 import { getFunctions } from 'firebase/functions';
+import { Button } from 'react-native-elements';
+import { useNavigation } from '@react-navigation/native';
+
+import ColorPickerScreen from './ColorPickerScreen';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDBjUEw_DQNMQsZJWfTtLL0PQJoH-xF0kk",
@@ -22,6 +26,8 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const database = getDatabase(firebaseApp);
 const functions = getFunctions(firebaseApp);
+
+
 
 const emotions = [
   { name: 'Surprised', color: '#FFA87A', icon: require('./asserts/surprised.png') },
@@ -73,6 +79,11 @@ const MoodScreen = () => {
       ]),
     ]).start();
   };
+  const handleCardPress = (index) => {
+    animateCard(index);
+    setSelectedEmotion(emotions[index]);
+  };
+  const navigation = useNavigation();
 
   const [selectedEmotion, setSelectedEmotion] = useState(null);
 
@@ -98,10 +109,10 @@ const MoodScreen = () => {
           <TouchableOpacity
             key={index}
             onPress={() => {
-              animateCard(index);
-              setSelectedEmotion(emotion);
+              handleCardPress(index);
               sendDataToFirebase(index);
             }}
+            
           >
             <Animated.View
               style={[
@@ -115,7 +126,21 @@ const MoodScreen = () => {
             >
               <Text style={styles.emotionText}>{emotion.name}</Text>
               {selectedEmotion === emotion && (
-                <Image source={emotion.icon} style={styles.emotionIcon} />
+                <View>
+                  <Image source={emotion.icon} style={styles.emotionIcon} />
+                  <Button
+  title="Adjust Color"
+  onPress={() =>
+    navigation.navigate('Pick your emotional color', {
+      selectedEmotion: selectedEmotion,
+    })
+  }
+  buttonStyle={styles.selectButton}
+  titleStyle={styles.selectButtonText}
+/>
+
+
+                </View>
               )}
             </Animated.View>
           </TouchableOpacity>
@@ -124,8 +149,8 @@ const MoodScreen = () => {
       <View style={{ flex: 1 }} />
     </View>
   );
-};
-
+} 
+  
 export default MoodScreen;
 
 const styles = StyleSheet.create({
@@ -179,5 +204,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 40,
     marginBottom: 20,
+  },
+  selectButton: {
+    marginTop: 10,
+    backgroundColor: '#007AFF',
+    borderRadius: 10,
+    width: 100,
+    height: 30,
+  },
+  selectButtonText: {
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
